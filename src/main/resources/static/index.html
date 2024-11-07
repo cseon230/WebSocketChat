@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Chat Test</title>
+    <script>
+        let socket;
+        function connect() {
+            socket = new WebSocket("ws://localhost:8080/chat");
+
+            socket.onopen = function() {
+                console.log("WebSocket 연결 성공");
+                appendMessage("Connected to the WebSocket server");
+            };
+
+            socket.onmessage = function(event) {
+                console.log("서버로부터 메시지 수신:", event.data);
+                appendMessage("Received: " + event.data);
+            };
+
+            socket.onclose = function() {
+                console.log("WebSocket 연결 종료");
+                appendMessage("Disconnected from the WebSocket server");
+            };
+        }
+
+        function sendMessage() {
+            const message = document.getElementById("message").value;
+            socket.send(message);
+            appendMessage("Sent: " + message);
+        }
+
+        function appendMessage(message) {
+            const messages = document.getElementById("messages");
+            const messageElement = document.createElement("div");
+            messageElement.textContent = message;
+            messages.appendChild(messageElement);
+        }
+    </script>
+</head>
+<body onload="connect()">
+<h1>WebSocket Chat Test</h1>
+<div id="messages" style="border: 1px solid black; padding: 10px; height: 200px; overflow-y: scroll;"></div>
+<input type="text" id="message" placeholder="Enter message">
+<button onclick="sendMessage()">Send</button>
+</body>
+</html>
